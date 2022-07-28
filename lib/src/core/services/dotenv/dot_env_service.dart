@@ -14,13 +14,14 @@ class DotEnvService {
   void _init() {
     final env = File('.env').readAsStringSync();
 
-    for (final line in env.split('\n')) {
+    for (final line
+        in env.replaceAll(String.fromCharCode(13), '').split('\n')) {
       if (line.isEmpty) {
         continue;
       }
 
       final parts = line.split('=');
-      _map[parts.first] = parts[1].trim();
+      _map[parts.first] = parts.last.trim();
     }
   }
 

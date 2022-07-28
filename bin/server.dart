@@ -1,33 +1,16 @@
 import 'dart:io';
 
-import 'package:shelf/shelf.dart';
+import 'package:regina_pratas_api/modular_backend.dart';
+import 'package:regina_pratas_api/src/core/services/logger/app_logger_impl.dart';
 import 'package:shelf/shelf_io.dart';
-import 'package:shelf_router/shelf_router.dart';
 
-// Configure routes.
-final _router = Router()
-  ..get('/', _rootHandler)
-  ..get('/echo/<message>', _echoHandler);
-
-Response _rootHandler(Request req) {
-  return Response.ok('Hello, World!\n');
-}
-
-Response _echoHandler(Request request) {
-  final message = request.params['message'];
-  return Response.ok('$message\n');
-}
-
-void main() async {
-  // Use any available host or container IP (usually `0.0.0.0`).
+Future<void> main() async {
   final ip = InternetAddress.anyIPv4;
-
-  // Configure a pipeline that logs requests.
-  final handler =
-      const Pipeline().addMiddleware(logRequests()).addHandler(_router);
-
-  // For running in containers, we respect the PORT environment variable.
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+  final handler = await startShelfModular();
+
   final server = await serve(handler, ip, port);
-  print('Server listening on port ${server.port}');
+
+  AppLoggerImpl().info('Serving at ws://${server.address.host}:${server.port}');
 }

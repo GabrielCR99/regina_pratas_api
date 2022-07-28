@@ -1,0 +1,51 @@
+components:
+  schemas:
+    CreateUser:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        document:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          default: usuario
+          enum:
+            - "admin"
+            - "usuario"
+            - "revendedor"
+  Register:
+    post:
+      tags:
+        - "auth"
+      summary: "Register a new user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+      responses:
+        "200":
+          description: "User created"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string

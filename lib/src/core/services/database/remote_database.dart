@@ -1,5 +1,5 @@
-abstract class RemoteDatabase<V> {
-  Future<V> query(
+abstract class RemoteDatabase {
+  Future<dynamic> query(
     String sql, {
     List<Object?> params = const [],
   });

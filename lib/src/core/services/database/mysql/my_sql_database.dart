@@ -5,6 +5,7 @@ import 'package:mysql1/mysql1.dart';
 import 'package:shelf_modular/shelf_modular.dart';
 
 import '../../dotenv/dot_env_service.dart';
+import '../exceptions/database_exception.dart';
 import '../remote_database.dart';
 
 class MySqlDatabase implements RemoteDatabase, Disposable {
@@ -26,13 +27,14 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
     var connection = await MySqlConnection.connect(
       ConnectionSettings(
         host: uri.host,
-        db: uri.pathSegments.first,
         port: uri.port,
-        password: password,
         user: username,
+        password: password,
+        db: uri.pathSegments.first,
       ),
     );
 
+    // ! This delay is intended because the package has a bug with MySQL version 8.0 and above
     if (Platform.isWindows) {
       await Future.delayed(const Duration(milliseconds: 10));
     }
@@ -42,17 +44,24 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
 
   @override
   Future<Results> query(
-    String sql, {
+    String query, {
     List<Object?> params = const [],
   }) async {
-    final connection = await completer.future;
+    try {
+      final connection = await completer.future;
 
-    return await connection.query(sql, params);
+      return await connection.query(query, params);
+    } on MySqlException catch (e, s) {
+      Error.throwWithStackTrace(
+        DatabaseException(message: e.message, databaseErrorCode: e.errorNumber),
+        s,
+      );
+    }
   }
 
   @override
   Future<void> dispose() async {
-    final connection = await completer.future;
-    connection.close();
+    final conn = await completer.future;
+    await conn.close();
   }
 }
