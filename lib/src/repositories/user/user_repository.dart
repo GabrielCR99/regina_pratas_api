@@ -6,7 +6,7 @@ abstract class UserRepository {
   Future<User> login({
     required String email,
     required String password,
-    bool supplierUser = false,
+    required String role,
   });
   Future<User> loginByEmailSocialKey({
     required String email,

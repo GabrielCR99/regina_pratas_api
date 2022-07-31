@@ -24,7 +24,7 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
     final username = uriUserInfo.first;
     final password = uriUserInfo.last;
 
-    var connection = await MySqlConnection.connect(
+    final connection = await MySqlConnection.connect(
       ConnectionSettings(
         host: uri.host,
         port: uri.port,

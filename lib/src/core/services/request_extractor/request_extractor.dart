@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:shelf/shelf.dart';
 
 class RequestExtractor {
   String getBearerAuthorization(Request request) {
-    final authorization = request.headers['authorization'] ?? '';
+    final authorization = request.headers[HttpHeaders.authorizationHeader] ?? '';
 
     final parts = authorization.split(' ');
 

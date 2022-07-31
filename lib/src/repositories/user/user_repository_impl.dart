@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:mysql1/mysql1.dart';
+
 import '../../core/exceptions/failure.dart';
 import '../../core/exceptions/user_exists_exception.dart';
+import '../../core/exceptions/user_not_found_exception.dart';
 import '../../core/services/bcrypt/bcrypt_service.dart';
 import '../../core/services/database/exceptions/database_exception.dart';
 import '../../core/services/database/remote_database.dart';
@@ -25,13 +28,11 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> createUser(User user) async {
-    try {
-      const query =
-          ''' 
+    const query = ''' 
       INSERT INTO usuario (nome, email, senha, celular, sobre, tipo_cadastro, funcao_usuario)
       VALUES (?, ?, ?, ?, ?, ?, ?) 
       ''';
-
+    try {
       final result = await _database.query(
         query,
         params: [
@@ -74,18 +75,94 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User> findById(int id) async {
-    // TODO: implement findById
-    throw UnimplementedError();
+    try {
+      final result = await _database.query(
+        ''' 
+        SELECT id, nome, email, celular, sobre, tipo_cadastro 
+        FROM usuario 
+        WHERE id = ?''',
+        params: [id],
+      );
+
+      if (result.isEmpty) {
+        _logger.error('User not found with id $id');
+        throw const UserNotFoundException(
+          statusCode: HttpStatus.notFound,
+          message: 'Usuário não encontrado',
+        );
+      } else {
+        final mySqlData = result.first;
+
+        return User(
+          name: mySqlData['nome'],
+          email: mySqlData['email'],
+          userRole: mySqlData['funcao_usuario'],
+          about: mySqlData['sobre'],
+          phone: (mySqlData['celular'] as Blob).toString(),
+          registerType: mySqlData['tipo_cadastro'],
+          imageAvatar: (mySqlData['img_avatar'] as Blob?)?.toString(),
+        );
+      }
+    } on DatabaseException catch (e, s) {
+      _logger.error(e.message, e, s);
+      Error.throwWithStackTrace(
+        const Failure(
+          message: 'Error while finding user',
+          statusCode: HttpStatus.internalServerError,
+        ),
+        s,
+      );
+    }
   }
 
   @override
   Future<User> login({
     required String email,
     required String password,
-    bool supplierUser = false,
+    required String role,
   }) async {
-    // TODO: implement login
-    throw UnimplementedError();
+    const query = ''' 
+      SELECT * FROM usuario WHERE email = ?
+      AND funcao_usuario = ? 
+      ''';
+
+    const notFoundException = UserNotFoundException(
+      message: 'Usuário ou senha inválidos',
+      statusCode: HttpStatus.notFound,
+    );
+    try {
+      final result = await _database.query(query, params: [email.trim(), role]);
+
+      if (result.isEmpty) {
+        _logger.error('Invalid user or password');
+        throw notFoundException;
+      } else if (!_bcryptService.compareHash(password, result.first['senha'])) {
+        _logger.error('Invalid user or password');
+        throw notFoundException;
+      } else {
+        final mySqlData = result.first;
+
+        return User(
+          id: mySqlData['id'] as int,
+          name: mySqlData['nome'] as String,
+          email: mySqlData['email'],
+          phone: (mySqlData['celular'] as Blob?).toString(),
+          userRole: mySqlData['funcao_usuario'] as String,
+          about: mySqlData['sobre'] as String,
+          registerType: mySqlData['tipo_cadastro'],
+          iosToken: (mySqlData['ios_token'] as Blob?)?.toString(),
+          androidToken: (mySqlData['android_token'] as Blob?)?.toString(),
+          refreshToken: (mySqlData['refresh_token'] as Blob?)?.toString(),
+          imageAvatar: (mySqlData['img_avatar'] as Blob?)?.toString(),
+        );
+      }
+    } on DatabaseException catch (e, s) {
+      _logger.error('Error while trying to login', e, s);
+      Error.throwWithStackTrace(
+        Failure(message: e.message, statusCode: HttpStatus.internalServerError),
+        s,
+      );
+    }
   }
 
   @override
@@ -110,8 +187,25 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<void> updateRefreshToken(User user) async {
-    // TODO: implement updateRefreshToken
-    throw UnimplementedError();
+    try {
+      await _database.query(
+        ''' 
+        UPDATE usuario 
+        SET refresh_token = ? 
+        WHERE id = ?''',
+        params: [user.refreshToken, user.id],
+      );
+    } on DatabaseException catch (e, s) {
+      _logger.error(e.message, e, s);
+
+      Error.throwWithStackTrace(
+        Failure(
+          message: e.message,
+          statusCode: HttpStatus.internalServerError,
+        ),
+        s,
+      );
+    }
   }
 
   @override
@@ -125,7 +219,34 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<void> updateUserDeviceTokenAndRefreshToken(User user) async {
-    // TODO: implement updateUserDeviceTokenAndRefreshToken
-    throw UnimplementedError();
+    try {
+      final setParams = <String, dynamic>{};
+
+      if (user.iosToken != null) {
+        setParams.putIfAbsent('ios_token', () => user.iosToken);
+      } else {
+        setParams.putIfAbsent('android_token', () => user.androidToken);
+      }
+
+      final query = ''' 
+      UPDATE usuario
+      SET ${setParams.keys.first} = ?, refresh_token = ?
+      WHERE id = ?
+      ''';
+
+      await _database.query(
+        query,
+        params: [setParams.values.first, user.refreshToken, user.id],
+      );
+    } on DatabaseException catch (e, s) {
+      _logger.error('Error while confirming login!', e, s);
+      Error.throwWithStackTrace(
+        const Failure(
+          message: 'Error while confirming login!',
+          statusCode: HttpStatus.internalServerError,
+        ),
+        s,
+      );
+    }
   }
 }

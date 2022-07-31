@@ -4,6 +4,7 @@ class User {
   final String? email;
   final String? password;
   final String? phone;
+  final String? document;
   final String? about;
   final String? registerType;
   final String? userRole;
@@ -19,6 +20,7 @@ class User {
     this.email,
     this.password,
     this.phone,
+    this.document,
     this.about,
     this.registerType,
     this.userRole,
@@ -73,6 +75,7 @@ class User {
         other.email == email &&
         other.password == password &&
         other.phone == phone &&
+        other.document == document &&
         other.about == about &&
         other.registerType == registerType &&
         other.userRole == userRole &&
@@ -90,6 +93,7 @@ class User {
         email.hashCode ^
         password.hashCode ^
         phone.hashCode ^
+        document.hashCode ^
         about.hashCode ^
         registerType.hashCode ^
         userRole.hashCode ^

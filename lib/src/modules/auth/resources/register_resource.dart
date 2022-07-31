@@ -21,8 +21,9 @@ class RegisterResource extends Resource {
   ) async {
     final service = injector<UserService>();
     final logger = injector<AppLogger>();
-    final data = arguments.data as Map<String, dynamic>;
+
     try {
+      final data = await arguments.data as Map<String, dynamic>;
       final user = UserSaveInputModel.requestMapping(data: data);
       await service.createUser(user);
 

@@ -1,5 +1,7 @@
+import 'package:mysql1/mysql1.dart';
+
 abstract class RemoteDatabase {
-  Future<dynamic> query(
+  Future<Results> query(
     String sql, {
     List<Object?> params = const [],
   });

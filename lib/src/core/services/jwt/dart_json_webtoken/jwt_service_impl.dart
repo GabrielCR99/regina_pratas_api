@@ -17,7 +17,7 @@ class JwtServiceImpl implements JwtService {
       expiry: DateTime.now().add(const Duration(days: 1)),
       notBefore: DateTime.now(),
       issuedAt: DateTime.now(),
-      otherClaims: {'audience': audience},
+      audience: [audience],
       maxAge: const Duration(days: 1),
     );
 
@@ -43,6 +43,10 @@ class JwtServiceImpl implements JwtService {
   }
 
   @override
-  JwtClaim verifyToken(String token) =>
+  JwtClaim getClaims(String token) =>
       verifyJwtHS256Signature(token, _dotEnvService['JWT_SECRET']!);
+
+  @override
+  void validateToken({String? issuer, String? audience}) =>
+      validateToken(issuer: issuer, audience: audience);
 }

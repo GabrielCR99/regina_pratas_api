@@ -4,27 +4,19 @@ import 'src/app_module.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_modular/shelf_modular.dart';
 
-Future<Handler> startShelfModular() async {
-  return Modular(
-    module: AppModule(),
-    middlewares: [
-      logRequests(),
-      _jsonResponse(),
-      _corsMiddleware(),
-    ],
-  );
-}
+Future<Handler> startShelfModular() async => Modular(
+      module: AppModule(),
+      middlewares: [
+        logRequests(),
+        _jsonResponse(),
+        _corsMiddleware(),
+      ],
+    );
 
 Middleware _jsonResponse() => (handler) => (request) async {
-      final response = await handler(request);
+      var response = await handler(request);
 
-      return response.change(
-        headers: {
-          HttpHeaders.contentTypeHeader:
-              ContentType('application', 'json', charset: 'utf-8').toString(),
-          ...response.headers,
-        },
-      );
+      return response.change(headers: {'content-Type': 'application/json'});
     };
 
 Middleware _corsMiddleware() => (handler) => (request) async {
@@ -41,5 +33,5 @@ Middleware _corsMiddleware() => (handler) => (request) async {
       }
       final response = await handler(request);
 
-      return response.change(headers: {...headers, ...response.headers});
+      return response.change(headers: headers);
     };
