@@ -1,6 +1,7 @@
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 import '../../core/exceptions/service_exception.dart';
+import '../../core/exceptions/user_not_found_exception.dart';
 import '../../core/services/jwt/jwt_service.dart';
 import '../../core/services/logger/app_logger.dart';
 import '../../entities/user.dart';
@@ -53,10 +54,31 @@ class UserServiceImpl implements UserService {
     required String email,
     required String socialKey,
     required String socialType,
+    required String name,
     String? imageAvatar,
-  }) {
-    // TODO: implement loginByEmailSocialKey
-    throw UnimplementedError();
+  }) async {
+    try {
+      return await _userRepository.loginByEmailSocialKey(
+        email: email,
+        socialKey: socialKey,
+        socialType: socialType,
+      );
+    } on UserNotFoundException catch (e) {
+      _logger.error('User not found, creating one user', e);
+
+      final user = User(
+        name: name,
+        email: email,
+        imageAvatar: imageAvatar,
+        registerType: socialType,
+        socialKey: socialKey,
+        password: DateTime.now().toString(),
+        about: '',
+        userRole: 'usuario',
+      );
+
+      return await _userRepository.createUser(user);
+    }
   }
 
   @override

@@ -171,8 +171,56 @@ class UserRepositoryImpl implements UserRepository {
     required String socialKey,
     required String socialType,
   }) async {
-    // TODO: implement loginByEmailSocialKey
-    throw UnimplementedError();
+    try {
+      final result = await _database.query(
+        ''' 
+        SELECT * FROM usuario WHERE email = ?
+        ''',
+        params: [email],
+      );
+
+      if (result.isEmpty) {
+        throw const UserNotFoundException(
+          message: 'Usuário não encontrado',
+          statusCode: HttpStatus.notFound,
+        );
+      } else {
+        final mySqlData = result.first;
+
+        if (mySqlData['social_id'] == null ||
+            mySqlData['social_id'] != socialKey) {
+          await _database.query(
+            ''' 
+            UPDATE usuario 
+            SET social_id = ?, tipo_cadastro = ? 
+            WHERE id = ? 
+            ''',
+            params: [socialKey, socialType, mySqlData['id']],
+          );
+        }
+
+        return User(
+          id: mySqlData['id'] as int,
+          email: mySqlData['email'],
+          registerType: mySqlData['tipo_cadastro'],
+          iosToken: (mySqlData['ios_token'] as Blob?)?.toString(),
+          androidToken: (mySqlData['android_token'] as Blob?)?.toString(),
+          refreshToken: (mySqlData['refresh_token'] as Blob?)?.toString(),
+          imageAvatar: (mySqlData['img_avatar'] as Blob?)?.toString(),
+          about: mySqlData['sobre'],
+          phone: (mySqlData['celular'] as Blob?).toString(),
+          userRole: mySqlData['funcao_usuario'] ?? 'usuario',
+          name: mySqlData['nome'],
+          document: mySqlData['documento'],
+        );
+      }
+    } on DatabaseException catch (e, s) {
+      _logger.error('Error logging in with social key', e, s);
+      Error.throwWithStackTrace(
+        Failure(message: e.message, statusCode: HttpStatus.internalServerError),
+        s,
+      );
+    }
   }
 
   @override

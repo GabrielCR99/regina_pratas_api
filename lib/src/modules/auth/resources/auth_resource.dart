@@ -51,6 +51,7 @@ class AuthResource extends Resource {
       } else {
         loginViewModel.loginSocialValidate();
         user = await service.loginByEmailSocialKey(
+          name: loginViewModel.name!,
           email: loginViewModel.email,
           imageAvatar: loginViewModel.avatar,
           socialKey: loginViewModel.socialKey!,

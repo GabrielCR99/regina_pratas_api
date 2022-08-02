@@ -9,6 +9,7 @@ class LoginViewModel extends RequestMapping {
   String? avatar;
   String? socialType;
   String? socialKey;
+  String? name;
 
   LoginViewModel({required super.data});
 
@@ -21,6 +22,7 @@ class LoginViewModel extends RequestMapping {
     avatar = data['avatar'];
     socialType = data['social_type'];
     socialKey = data['social_key'];
+    name = data['name'];
   }
 
   void loginEmailValidate() {

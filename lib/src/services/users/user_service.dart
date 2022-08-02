@@ -15,6 +15,7 @@ abstract class UserService {
     required String email,
     required String socialKey,
     required String socialType,
+    required String name,
     String? imageAvatar,
   });
   Future<User> findById(int id);
