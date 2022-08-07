@@ -17,7 +17,12 @@ Future<Handler> startShelfModular() async => Modular(
 Middleware _jsonResponse() => (handler) => (request) async {
       var response = await handler(request);
 
-      return response.change(headers: {'content-Type': 'application/json'});
+      return response.change(
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          ...response.headers,
+        },
+      );
     };
 
 Middleware _corsMiddleware() => (handler) => (request) async {

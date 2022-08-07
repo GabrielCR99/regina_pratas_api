@@ -64,4 +64,38 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
     final conn = await completer.future;
     await conn.close();
   }
+
+  @override
+  Future<T?> transaction<T>(
+    Future<T> Function(TransactionContext p1) queryBlock, {
+    Function(Object p1)? onError,
+  }) async {
+    try {
+      final connection = await completer.future;
+
+      return await connection.transaction<T>(queryBlock, onError: onError);
+    } on MySqlException catch (e, s) {
+      Error.throwWithStackTrace(
+        DatabaseException(message: e.message, databaseErrorCode: e.errorNumber),
+        s,
+      );
+    }
+  }
+
+  @override
+  Future<List<Results>> queryMulti(
+    String sql, {
+    List<List<Object?>> params = const [],
+  }) async {
+    try {
+      final connection = await completer.future;
+
+      return await connection.queryMulti(sql, params);
+    } on MySqlException catch (e, s) {
+      Error.throwWithStackTrace(
+        DatabaseException(message: e.message, databaseErrorCode: e.errorNumber),
+        s,
+      );
+    }
+  }
 }

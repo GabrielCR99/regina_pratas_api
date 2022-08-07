@@ -48,7 +48,7 @@ class UserRepositoryImpl implements UserRepository {
 
       return user.copyWith(id: result.insertId);
     } on DatabaseException catch (e, s) {
-      const message = 'Usuário já existe';
+      const message = 'User already exists';
       const failureMessage = 'Error while registering user';
 
       if (e.message.contains('usuario.email_UNIQUE')) {
@@ -86,9 +86,9 @@ class UserRepositoryImpl implements UserRepository {
 
       if (result.isEmpty) {
         _logger.error('User not found with id $id');
-        throw const UserNotFoundException(
+        throw UserNotFoundException(
           statusCode: HttpStatus.notFound,
-          message: 'Usuário não encontrado',
+          message: 'User not found with id $id',
         );
       } else {
         final mySqlData = result.first;
@@ -98,7 +98,7 @@ class UserRepositoryImpl implements UserRepository {
           email: mySqlData['email'],
           userRole: mySqlData['funcao_usuario'],
           about: mySqlData['sobre'],
-          phone: (mySqlData['celular'] as Blob).toString(),
+          phone: (mySqlData['celular'] as Blob?)?.toString(),
           registerType: mySqlData['tipo_cadastro'],
           imageAvatar: (mySqlData['img_avatar'] as Blob?)?.toString(),
         );
@@ -127,7 +127,7 @@ class UserRepositoryImpl implements UserRepository {
       ''';
 
     const notFoundException = UserNotFoundException(
-      message: 'Usuário ou senha inválidos',
+      message: 'Invalid user or password',
       statusCode: HttpStatus.notFound,
     );
     try {

@@ -5,9 +5,9 @@ import '../../core/exceptions/user_not_found_exception.dart';
 import '../../core/services/jwt/jwt_service.dart';
 import '../../core/services/logger/app_logger.dart';
 import '../../entities/user.dart';
+import '../../modules/auth/view_models/refresh_token_view_model.dart';
 import '../../modules/auth/view_models/user_confirm_input_model.dart';
 import '../../modules/auth/view_models/user_refresh_token_input_model.dart';
-import '../../modules/auth/view_models/refresh_token_view_model.dart';
 import '../../modules/auth/view_models/user_save_input_model.dart';
 import '../../repositories/user/user_repository.dart';
 import 'user_service.dart';
@@ -38,7 +38,7 @@ class UserServiceImpl implements UserService {
       userRole: user.role,
     );
 
-    _userRepository.createUser(userEntity);
+    await _userRepository.createUser(userEntity);
   }
 
   @override

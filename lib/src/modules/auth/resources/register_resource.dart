@@ -23,17 +23,16 @@ class RegisterResource extends Resource {
     final logger = injector<AppLogger>();
 
     try {
-      final data = await arguments.data as Map<String, dynamic>;
-      final user = UserSaveInputModel.requestMapping(data: data);
+      final user = UserSaveInputModel.requestMapping(data: arguments.data);
       await service.createUser(user);
 
-      return Response.ok(jsonEncode({'message': 'Usuário criado com sucesso'}));
+      return Response.ok(jsonEncode({'message': 'User created'}));
     } on UserExistsException catch (e) {
-      return Response(e.statusCode, body: e.toJson());
+      return Response.forbidden(jsonEncode({'message': e.message}));
     } on Failure catch (e) {
       return Response(e.statusCode, body: e.toJson());
-    } catch (e) {
-      logger.error('Error while registering user', e);
+    } catch (e, s) {
+      logger.error('Error while registering user', e, s);
 
       return Response.internalServerError();
     }

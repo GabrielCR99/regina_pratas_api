@@ -1,10 +1,10 @@
-import 'resources/user_resource.dart';
 import 'package:shelf_modular/shelf_modular.dart';
 
 import '../../repositories/user/user_repository.dart';
 import '../../repositories/user/user_repository_impl.dart';
 import '../../services/users/user_service.dart';
 import '../../services/users/user_service_impl.dart';
+import 'resources/user_resource.dart';
 
 class UserModule extends Module {
   @override
