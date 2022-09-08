@@ -1,4 +1,6 @@
-class User {
+import 'package:equatable/equatable.dart';
+
+class User extends Equatable {
   final int? id;
   final String? name;
   final String? email;
@@ -45,62 +47,37 @@ class User {
     String? refreshToken,
     String? imageAvatar,
     String? socialKey,
-  }) {
-    return User(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      password: password ?? this.password,
-      phone: phone ?? this.phone,
-      about: about ?? this.about,
-      registerType: registerType ?? this.registerType,
-      userRole: userRole ?? this.userRole,
-      androidToken: androidToken ?? this.androidToken,
-      iosToken: iosToken ?? this.iosToken,
-      refreshToken: refreshToken ?? this.refreshToken,
-      imageAvatar: imageAvatar ?? this.imageAvatar,
-      socialKey: socialKey ?? this.socialKey,
-    );
-  }
+  }) =>
+      User(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        email: email ?? this.email,
+        password: password ?? this.password,
+        phone: phone ?? this.phone,
+        about: about ?? this.about,
+        registerType: registerType ?? this.registerType,
+        userRole: userRole ?? this.userRole,
+        androidToken: androidToken ?? this.androidToken,
+        iosToken: iosToken ?? this.iosToken,
+        refreshToken: refreshToken ?? this.refreshToken,
+        imageAvatar: imageAvatar ?? this.imageAvatar,
+        socialKey: socialKey ?? this.socialKey,
+      );
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is User &&
-        other.id == id &&
-        other.name == name &&
-        other.email == email &&
-        other.password == password &&
-        other.phone == phone &&
-        other.document == document &&
-        other.about == about &&
-        other.registerType == registerType &&
-        other.userRole == userRole &&
-        other.androidToken == androidToken &&
-        other.iosToken == iosToken &&
-        other.refreshToken == refreshToken &&
-        other.imageAvatar == imageAvatar &&
-        other.socialKey == socialKey;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        name.hashCode ^
-        email.hashCode ^
-        password.hashCode ^
-        phone.hashCode ^
-        document.hashCode ^
-        about.hashCode ^
-        registerType.hashCode ^
-        userRole.hashCode ^
-        androidToken.hashCode ^
-        iosToken.hashCode ^
-        refreshToken.hashCode ^
-        imageAvatar.hashCode ^
-        socialKey.hashCode;
-  }
+  List<Object?> get props => [
+        id,
+        name,
+        email,
+        password,
+        phone,
+        about,
+        registerType,
+        userRole,
+        androidToken,
+        iosToken,
+        refreshToken,
+        imageAvatar,
+        socialKey,
+      ];
 }

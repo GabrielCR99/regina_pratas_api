@@ -15,25 +15,21 @@ class OrderViewModel {
     this.cpf,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'userId': userId,
-      'cpf': cpf,
-      'address': address,
-      'items': items.map((x) => x.toMap()).toList(),
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'userId': userId,
+        'cpf': cpf,
+        'address': address,
+        'items': items.map((x) => x.toMap()).toList(),
+      };
 
-  factory OrderViewModel.fromMap(Map<String, dynamic> map) {
-    return OrderViewModel(
-      userId: map['userId']?.toInt() ?? 0,
-      cpf: map['cpf'],
-      address: map['address'] ?? '',
-      items: List<OrderItemViewModel>.from(
-        map['items']?.map((x) => OrderItemViewModel.fromMap(x)),
-      ),
-    );
-  }
+  factory OrderViewModel.fromMap(Map<String, dynamic> map) => OrderViewModel(
+        userId: map['userId']?.toInt() ?? 0,
+        cpf: map['cpf'],
+        address: map['address'] ?? '',
+        items: List<OrderItemViewModel>.from(
+          map['items']?.map(OrderItemViewModel.fromMap),
+        ),
+      );
 
   String toJson() => json.encode(toMap());
 

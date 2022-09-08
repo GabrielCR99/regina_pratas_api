@@ -28,7 +28,7 @@ class RegisterResource extends Resource {
 
       return Response.ok(jsonEncode({'message': 'User created'}));
     } on UserExistsException catch (e) {
-      return Response.forbidden(jsonEncode({'message': e.message}));
+      return Response(e.statusCode, body: e.toJson());
     } on Failure catch (e) {
       return Response(e.statusCode, body: e.toJson());
     } catch (e, s) {

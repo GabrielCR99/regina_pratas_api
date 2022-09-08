@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class ServiceException {
+class ServiceException implements Exception {
   final String message;
   final int statusCode;
 

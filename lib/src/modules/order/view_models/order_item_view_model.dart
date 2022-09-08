@@ -9,19 +9,16 @@ class OrderItemViewModel {
     required this.productId,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'amount': amount,
-      'productId': productId,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'amount': amount,
+        'productId': productId,
+      };
 
-  factory OrderItemViewModel.fromMap(Map<String, dynamic> map) {
-    return OrderItemViewModel(
-      amount: map['amount']?.toInt() ?? 0,
-      productId: map['productId']?.toInt() ?? 0,
-    );
-  }
+  factory OrderItemViewModel.fromMap(Map<String, dynamic> map) =>
+      OrderItemViewModel(
+        amount: map['amount']?.toInt() ?? 0,
+        productId: map['productId']?.toInt() ?? 0,
+      );
 
   String toJson() => json.encode(toMap());
 

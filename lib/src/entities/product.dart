@@ -17,27 +17,23 @@ class Product {
     required this.category,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'price': price,
-      'image': image,
-      'category': category,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'name': name,
+        'description': description,
+        'price': price,
+        'image': image,
+        'category': category,
+      };
 
-  factory Product.fromMap(Map<String, dynamic> map) {
-    return Product(
-      id: map['id']?.toInt() ?? 0,
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      price: map['price']?.toDouble() ?? 0.0,
-      image: map['image'] ?? '',
-      category: map['category']?.toInt() ?? 0,
-    );
-  }
+  factory Product.fromMap(Map<String, dynamic> map) => Product(
+        id: map['id']?.toInt() ?? 0,
+        name: map['name'] ?? '',
+        description: map['description'] ?? '',
+        price: map['price']?.toDouble() ?? 0.0,
+        image: map['image'] ?? '',
+        category: map['category']?.toInt() ?? 0,
+      );
 
   String toJson() => jsonEncode(toMap());
 

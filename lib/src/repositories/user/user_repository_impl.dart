@@ -51,7 +51,7 @@ class UserRepositoryImpl implements UserRepository {
       const message = 'User already exists';
       const failureMessage = 'Error while registering user';
 
-      if (e.message.contains('usuario.email_UNIQUE')) {
+      if (e.message.contains('usuario.unique_index')) {
         _logger.error(message, e, s);
         Error.throwWithStackTrace(
           const UserExistsException(
@@ -96,9 +96,8 @@ class UserRepositoryImpl implements UserRepository {
         return User(
           name: mySqlData['nome'],
           email: mySqlData['email'],
-          userRole: mySqlData['funcao_usuario'],
           about: mySqlData['sobre'],
-          phone: (mySqlData['celular'] as Blob?)?.toString(),
+          phone: mySqlData['celular'],
           registerType: mySqlData['tipo_cadastro'],
           imageAvatar: (mySqlData['img_avatar'] as Blob?)?.toString(),
         );
@@ -123,7 +122,6 @@ class UserRepositoryImpl implements UserRepository {
   }) async {
     const query = ''' 
       SELECT * FROM usuario WHERE email = ?
-      AND funcao_usuario = ? 
       ''';
 
     const notFoundException = UserNotFoundException(
@@ -131,12 +129,12 @@ class UserRepositoryImpl implements UserRepository {
       statusCode: HttpStatus.notFound,
     );
     try {
-      final result = await _database.query(query, params: [email.trim(), role]);
+      final result = await _database.query(query, params: [email.trim()]);
 
-      if (result.isEmpty) {
-        _logger.error('Invalid user or password');
-        throw notFoundException;
-      } else if (!_bcryptService.compareHash(password, result.first['senha'])) {
+      final passwordEquals =
+          _bcryptService.compareHash(password, result.first['senha']);
+
+      if (result.isEmpty || !passwordEquals) {
         _logger.error('Invalid user or password');
         throw notFoundException;
       } else {
@@ -146,7 +144,7 @@ class UserRepositoryImpl implements UserRepository {
           id: mySqlData['id'] as int,
           name: mySqlData['nome'] as String,
           email: mySqlData['email'],
-          phone: (mySqlData['celular'] as Blob?).toString(),
+          phone: mySqlData['celular'],
           userRole: mySqlData['funcao_usuario'] as String,
           about: mySqlData['sobre'] as String,
           registerType: mySqlData['tipo_cadastro'],

@@ -22,7 +22,8 @@ class UserResource extends Resource {
           'name': userData.name,
           'email': userData.email,
           'about': userData.about,
-          'role': userData.userRole,
+          'phone': userData.phone,
+          'image_avatar': userData.imageAvatar,
         }),
       );
     } on UserNotFoundException catch (e) {

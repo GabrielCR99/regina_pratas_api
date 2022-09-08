@@ -2,22 +2,18 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:mysql1/mysql1.dart';
-import 'package:shelf_modular/shelf_modular.dart';
-
 import '../../dotenv/dot_env_service.dart';
 import '../exceptions/database_exception.dart';
 import '../remote_database.dart';
 
-class MySqlDatabase implements RemoteDatabase, Disposable {
+class MySqlDatabase implements RemoteDatabase {
   final DotEnvService _dotEnv;
 
   MySqlDatabase({required DotEnvService dotEnv}) : _dotEnv = dotEnv {
     _init();
   }
 
-  final completer = Completer<MySqlConnection>();
-
-  Future<void> _init() async {
+  Future<MySqlConnection> _init() async {
     final url = _dotEnv['DATABASE_URL'] ?? '';
     final uri = Uri.parse(url);
     final uriUserInfo = uri.userInfo.split(':');
@@ -39,7 +35,7 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
       await Future.delayed(const Duration(milliseconds: 10));
     }
 
-    completer.complete(connection);
+    return connection;
   }
 
   @override
@@ -47,8 +43,10 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
     String query, {
     List<Object?> params = const [],
   }) async {
+    MySqlConnection? connection;
+
     try {
-      final connection = await completer.future;
+      connection = await _init();
 
       return await connection.query(query, params);
     } on MySqlException catch (e, s) {
@@ -56,13 +54,9 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
         DatabaseException(message: e.message, databaseErrorCode: e.errorNumber),
         s,
       );
+    } finally {
+      await connection?.close();
     }
-  }
-
-  @override
-  Future<void> dispose() async {
-    final conn = await completer.future;
-    await conn.close();
   }
 
   @override
@@ -70,8 +64,10 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
     Future<T> Function(TransactionContext p1) queryBlock, {
     Function(Object p1)? onError,
   }) async {
+    MySqlConnection? connection;
+
     try {
-      final connection = await completer.future;
+      connection = await _init();
 
       return await connection.transaction<T>(queryBlock, onError: onError);
     } on MySqlException catch (e, s) {
@@ -79,6 +75,8 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
         DatabaseException(message: e.message, databaseErrorCode: e.errorNumber),
         s,
       );
+    } finally {
+      await connection?.close();
     }
   }
 
@@ -87,8 +85,10 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
     String sql, {
     List<List<Object?>> params = const [],
   }) async {
+    MySqlConnection? connection;
+
     try {
-      final connection = await completer.future;
+      connection = await _init();
 
       return await connection.queryMulti(sql, params);
     } on MySqlException catch (e, s) {
@@ -96,6 +96,8 @@ class MySqlDatabase implements RemoteDatabase, Disposable {
         DatabaseException(message: e.message, databaseErrorCode: e.errorNumber),
         s,
       );
+    } finally {
+      await connection?.close();
     }
   }
 }

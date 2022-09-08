@@ -77,12 +77,12 @@ class UserServiceImpl implements UserService {
         userRole: 'usuario',
       );
 
-      return await _userRepository.createUser(user);
+      return _userRepository.createUser(user);
     }
   }
 
   @override
-  Future<User> findById(int id) => _userRepository.findById(id);
+  Future<User> findById(int id) async => _userRepository.findById(id);
 
   @override
   Future<RefreshTokenViewModel> refreshToken(

@@ -59,12 +59,15 @@ class OrderRepositoryImpl implements OrderRepository {
       });
 
       return orderIdResponse;
-    } on DatabaseException catch (e) {
-      _logger.error('Error saving order', e);
+    } on DatabaseException catch (e, s) {
+      _logger.error('Error saving order', e, s);
 
-      throw const Failure(
-        message: 'Error saving order',
-        statusCode: HttpStatus.badRequest,
+      Error.throwWithStackTrace(
+        const Failure(
+          message: 'Error saving order',
+          statusCode: HttpStatus.badRequest,
+        ),
+        s,
       );
     }
   }

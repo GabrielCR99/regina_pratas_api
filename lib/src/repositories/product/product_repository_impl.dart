@@ -39,9 +39,12 @@ class ProductRepositoryImpl implements ProductRepository {
     } on DatabaseException catch (e, s) {
       _logger.error('Error while finding all products', e, s);
 
-      throw const Failure(
-        message: 'Error while finding all products',
-        statusCode: HttpStatus.notFound,
+      Error.throwWithStackTrace(
+        const Failure(
+          message: 'Error while finding all products',
+          statusCode: HttpStatus.notFound,
+        ),
+        s,
       );
     }
   }
@@ -69,9 +72,12 @@ class ProductRepositoryImpl implements ProductRepository {
     } on DatabaseException catch (e, s) {
       _logger.error('Error while finding product with id $id', e, s);
 
-      throw const Failure(
-        message: 'Error while finding product by id',
-        statusCode: HttpStatus.notFound,
+      Error.throwWithStackTrace(
+        const Failure(
+          message: 'Error while finding product by id',
+          statusCode: HttpStatus.notFound,
+        ),
+        s,
       );
     }
   }

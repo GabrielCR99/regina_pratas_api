@@ -15,7 +15,7 @@ Future<Handler> startShelfModular() async => Modular(
     );
 
 Middleware _jsonResponse() => (handler) => (request) async {
-      var response = await handler(request);
+      final response = await handler(request);
 
       return response.change(
         headers: {
