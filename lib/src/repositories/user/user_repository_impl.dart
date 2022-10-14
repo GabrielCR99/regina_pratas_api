@@ -211,7 +211,7 @@ class UserRepositoryImpl implements UserRepository {
           refreshToken: (mySqlData['refresh_token'] as Blob?)?.toString(),
           imageAvatar: (mySqlData['img_avatar'] as Blob?)?.toString(),
           about: mySqlData['sobre'],
-          phone: (mySqlData['celular'] as Blob?).toString(),
+          phone: mySqlData['celular'],
           userRole: mySqlData['funcao_usuario'] ?? 'usuario',
           name: mySqlData['nome'],
           document: mySqlData['documento'],

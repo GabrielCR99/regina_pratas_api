@@ -77,6 +77,8 @@ class UserServiceImpl implements UserService {
         password: DateTime.now().toString(),
         about: '',
         userRole: 'usuario',
+        phone: '',
+        document: '',
       );
 
       return _userRepository.createUser(user);
