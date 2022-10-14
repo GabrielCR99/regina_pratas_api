@@ -4,7 +4,10 @@ class DatabaseException implements Exception {
   final String message;
   final int databaseErrorCode;
 
-  DatabaseException({required this.message, required this.databaseErrorCode});
+  const DatabaseException({
+    required this.message,
+    required this.databaseErrorCode,
+  });
 
   String toJson() => jsonEncode({
         'message': message,

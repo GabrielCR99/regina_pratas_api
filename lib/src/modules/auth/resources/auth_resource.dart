@@ -20,11 +20,15 @@ class AuthResource extends Resource {
   @override
   List<Route> get routes => [
         Route.post('/', _loginHandler),
-        Route.put('/refresh', _refreshTokenHandler, middlewares: [AuthGuard()]),
+        Route.put(
+          '/refresh',
+          _refreshTokenHandler,
+          middlewares: [const AuthGuard()],
+        ),
         Route.path(
           '/confirm',
           _confirmLoginHandler,
-          middlewares: [AuthGuard()],
+          middlewares: [const AuthGuard()],
         ),
       ];
 

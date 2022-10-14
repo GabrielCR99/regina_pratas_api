@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:mysql1/mysql1.dart';
+
 import '../../dotenv/dot_env_service.dart';
 import '../exceptions/database_exception.dart';
 import '../remote_database.dart';

@@ -25,7 +25,7 @@ class DotEnvService {
     }
   }
 
-  String? getValue(String key) => _map[key];
+  String? getValue(String key) => _map[key] as String;
 
-  String? operator [](String key) => _map[key];
+  String? operator [](String key) => _map[key] as String;
 }

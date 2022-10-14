@@ -78,7 +78,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final result = await _database.query(
         ''' 
-        SELECT id, nome, email, celular, sobre, tipo_cadastro 
+        SELECT id, nome, email, celular, sobre, tipo_cadastro, img_avatar
         FROM usuario 
         WHERE id = ?''',
         params: [id],
@@ -227,8 +227,25 @@ class UserRepositoryImpl implements UserRepository {
     required String token,
     required Platform platform,
   }) async {
-    // TODO: implement updateDeviceToken
-    throw UnimplementedError();
+    try {
+      var setSql = '';
+      setSql =
+          platform == Platform.ios ? 'ios_token = ? ' : 'android_token = ? ';
+
+      final query = ''' 
+      UPDATE usuario 
+      SET $setSql 
+      WHERE id = ? ''';
+
+      await _database.query(query, params: [token, id]);
+    } on DatabaseException catch (e, s) {
+      _logger.error('Error while updating device token', e, s);
+
+      Error.throwWithStackTrace(
+        Failure(message: e.message, statusCode: HttpStatus.internalServerError),
+        s,
+      );
+    }
   }
 
   @override
@@ -259,8 +276,24 @@ class UserRepositoryImpl implements UserRepository {
     required int id,
     required String urlAvatar,
   }) async {
-    // TODO: implement updateUrlAvatar
-    throw UnimplementedError();
+    try {
+      await _database.query(
+        '''
+        UPDATE usuario 
+        SET img_avatar = ? 
+        WHERE id = ?''',
+        params: [urlAvatar, id],
+      );
+    } on DatabaseException catch (e, s) {
+      _logger.error('Error trying to update image avatar', e, s);
+      Error.throwWithStackTrace(
+        Failure(
+          message: e.message,
+          statusCode: HttpStatus.internalServerError,
+        ),
+        s,
+      );
+    }
   }
 
   @override

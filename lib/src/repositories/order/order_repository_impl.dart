@@ -43,7 +43,6 @@ class OrderRepositoryImpl implements OrderRepository {
         final result = await _database.query(
           ''' INSERT INTO pedido(usuario_id, cpf_cliente, endereco_entrega, status_pedido) 
           VALUES (?, ?, ?, ?) ''',
-          params: [],
         );
         final orderId = result.insertId;
         await _database.queryMulti(

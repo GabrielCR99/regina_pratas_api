@@ -6,9 +6,11 @@ import '../../core/services/jwt/jwt_service.dart';
 import '../../core/services/logger/app_logger.dart';
 import '../../entities/user.dart';
 import '../../modules/auth/view_models/refresh_token_view_model.dart';
+import '../../modules/auth/view_models/update_url_avatar_view_model.dart';
 import '../../modules/auth/view_models/user_confirm_input_model.dart';
 import '../../modules/auth/view_models/user_refresh_token_input_model.dart';
 import '../../modules/auth/view_models/user_save_input_model.dart';
+import '../../modules/auth/view_models/user_update_device_token_input_model.dart';
 import '../../repositories/user/user_repository.dart';
 import 'user_service.dart';
 
@@ -82,7 +84,7 @@ class UserServiceImpl implements UserService {
   }
 
   @override
-  Future<User> findById(int id) async => _userRepository.findById(id);
+  Future<User> findById(int id) => _userRepository.findById(id);
 
   @override
   Future<RefreshTokenViewModel> refreshToken(
@@ -161,4 +163,22 @@ class UserServiceImpl implements UserService {
 
     return refreshToken;
   }
+
+  @override
+  Future<User> updateAvatar(UpdateUrlAvatarViewModel viewModel) async {
+    await _userRepository.updateUrlAvatar(
+      id: viewModel.userId,
+      urlAvatar: viewModel.urlAvatar,
+    );
+
+    return findById(viewModel.userId);
+  }
+
+  @override
+  Future<void> updateDeviceToken(UserUpdateDeviceTokenInputModel inputModel) =>
+      _userRepository.updateDeviceToken(
+        id: inputModel.userId,
+        token: inputModel.token,
+        platform: inputModel.platform,
+      );
 }

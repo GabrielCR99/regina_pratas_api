@@ -12,10 +12,7 @@ class AuthGuard extends ModularMiddleware {
   final List<String> roles;
   final bool isRefreshToken;
 
-  AuthGuard({
-    this.roles = const <String>[],
-    this.isRefreshToken = false,
-  });
+  const AuthGuard({this.roles = const <String>[], this.isRefreshToken = false});
 
   @override
   Handler call(Handler handler, [ModularRoute? route]) {
@@ -35,7 +32,7 @@ class AuthGuard extends ModularMiddleware {
         final claimsMap = claims.toJson();
 
         final userId = claimsMap['sub'];
-        final role = claimsMap['aud'] as List<String>? ?? ['user'];
+        final role = claimsMap['aud'] as List<String>? ?? const ['usuario'];
 
         if (request.url.path != 'auth/refresh') {
           claims.validate(issuer: 'Regina Pratas', audience: role.first);

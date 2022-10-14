@@ -6,7 +6,7 @@ import '../jwt_service.dart';
 class JwtServiceImpl implements JwtService {
   final DotEnvService _dotEnvService;
 
-  JwtServiceImpl({required DotEnvService dotEnvService})
+  const JwtServiceImpl({required DotEnvService dotEnvService})
       : _dotEnvService = dotEnvService;
 
   @override
@@ -36,7 +36,7 @@ class JwtServiceImpl implements JwtService {
       expiry: DateTime.now().add(Duration(days: expiry)),
       notBefore: DateTime.now().add(Duration(hours: notBefore)),
       issuedAt: DateTime.now(),
-      otherClaims: const <String, dynamic>{},
+      otherClaims: const {},
     );
 
     return 'Bearer ${issueJwtHS256(claimSet, _dotEnvService['JWT_SECRET']!)}';
@@ -45,8 +45,4 @@ class JwtServiceImpl implements JwtService {
   @override
   JwtClaim getClaims(String token) =>
       verifyJwtHS256Signature(token, _dotEnvService['JWT_SECRET']!);
-
-  @override
-  void validateToken({String? issuer, String? audience}) =>
-      validateToken(issuer: issuer, audience: audience);
 }

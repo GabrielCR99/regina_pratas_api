@@ -5,7 +5,8 @@ import 'package:shelf/shelf.dart';
 
 class RequestExtractor {
   String getBearerAuthorization(Request request) {
-    final authorization = request.headers[HttpHeaders.authorizationHeader] ?? '';
+    final authorization =
+        request.headers[HttpHeaders.authorizationHeader] ?? '';
 
     final parts = authorization.split(' ');
 
@@ -31,5 +32,5 @@ class LoginCredential {
   final String email;
   final String password;
 
-  LoginCredential({required this.email, required this.password});
+  const LoginCredential({required this.email, required this.password});
 }

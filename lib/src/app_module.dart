@@ -21,7 +21,11 @@ class AppModule extends Module {
         Route.delete('/**', notFoundHandler),
         Route.get('/docs/**', swaggerHandler),
         Route.module('/auth', module: AuthModule()),
-        Route.module('/user', module: UserModule(), middlewares: [AuthGuard()]),
+        Route.module(
+          '/user',
+          module: UserModule(),
+          middlewares: [const AuthGuard()],
+        ),
         Route.module('/products', module: ProductModule()),
         Route.module('/order', module: OrderModule()),
       ];

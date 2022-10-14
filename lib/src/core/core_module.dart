@@ -15,7 +15,7 @@ class CoreModule extends Module {
   @override
   List<Bind<Object>> get binds => [
         Bind.singleton<AppLogger>((_) => AppLoggerImpl(), export: true),
-        Bind.singleton<DotEnvService>((_) => DotEnvService(), export: true),
+        Bind.singleton((_) => DotEnvService(), export: true),
         Bind.singleton<BcryptService>((_) => BcryptServiceImpl(), export: true),
         Bind.singleton<JwtService>(
           (i) => JwtServiceImpl(dotEnvService: i<DotEnvService>()),
