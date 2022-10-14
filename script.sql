@@ -20,6 +20,12 @@ CREATE TABLE IF NOT EXISTS `produto` (
   PRIMARY KEY (id))
 ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `categoria` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nome_categoria` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB;
+
 CREATE TABLE IF NOT EXISTS `pedido` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `usuario_id` INT NOT NULL,
@@ -57,22 +63,3 @@ CREATE TABLE IF NOT EXISTS `pedido_item` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-INSERT INTO produto(id, nome, descricao, preco, imagem)
-VALUES (null, 'X-Tudão + Suco', '', 12.99, '/xtudo_suco.jpeg');
-
-INSERT INTO produto(id, nome, descricao, preco, imagem)
-VALUES (null, 'Misto Quente', 'Pão, presunto, muçarela, Orégano', 6.99, '/xtudo_suco.jpeg');
-
-INSERT INTO produto(id, nome, descricao, preco, imagem)
-VALUES (null, 'X-Quente', 'Pão, Hambúrger (Tradicional 56g), Muçarela e Tomate', 10.99, '/xtudo_suco.jpeg');
-
-INSERT INTO produto(id, nome, descricao, preco, imagem)
-VALUES (null, 'X-Salada',
-        'Pão, Hambúrguer (Tradicional 56g), Presunto, Muçarela, Ovo, Alface, Tomate, Milho e Batata Palha.', 11.99,
-        '/xtudo_suco.jpeg');
-
-INSERT INTO produto(id, nome, descricao, preco, imagem)
-VALUES (null, 'X-Tudo',
-        'Pão, Hambúrguer (Tradicional 56g), Presunto, Muçarela, Salsicha, Bacon, Calabresa, Ovo, Catupiry, Alface, Tomate, Milho e Batata Palha.',
-        15.99, '/xtudo_suco.jpeg');

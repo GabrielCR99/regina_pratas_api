@@ -144,7 +144,7 @@ class UserRepositoryImpl implements UserRepository {
           id: mySqlData['id'] as int,
           name: mySqlData['nome'] as String,
           email: mySqlData['email'],
-          phone: mySqlData['celular'],
+          phone: (mySqlData['celular'] as Blob?)?.toString(),
           userRole: mySqlData['funcao_usuario'] as String,
           about: mySqlData['sobre'] as String,
           registerType: mySqlData['tipo_cadastro'],
