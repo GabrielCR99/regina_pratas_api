@@ -131,20 +131,25 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final result = await _database.query(query, params: [email.trim()]);
 
-      final passwordEquals =
-          _bcryptService.compareHash(password, result.first['senha']);
-
-      if (result.isEmpty || !passwordEquals) {
+      if (result.isEmpty) {
         _logger.error('Invalid user or password');
         throw notFoundException;
       } else {
         final mySqlData = result.first;
 
+        final passwordEquals =
+            _bcryptService.compareHash(password, mySqlData['senha']);
+
+        if (!passwordEquals) {
+          _logger.error('Invalid user or password');
+          throw notFoundException;
+        }
+
         return User(
           id: mySqlData['id'] as int,
           name: mySqlData['nome'] as String,
           email: mySqlData['email'],
-          phone: (mySqlData['celular'] as Blob?)?.toString(),
+          phone: mySqlData['celular'],
           userRole: mySqlData['funcao_usuario'] as String,
           about: mySqlData['sobre'] as String,
           registerType: mySqlData['tipo_cadastro'],
